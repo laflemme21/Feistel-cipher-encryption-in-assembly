@@ -11,7 +11,7 @@ output-list RAM[0]%D2.6.2;
 set RAM[0] 0,   // Set test arguments
 set RAM[1] 0,
 set RAM[2] 0;
-repeat 2000 {
+repeat 4000 {
   ticktock;
 }
 output;
