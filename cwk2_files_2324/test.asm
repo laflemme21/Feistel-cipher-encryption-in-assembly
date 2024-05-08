@@ -1,62 +1,26 @@
 
-//--------------------- L0 in R6 -----------------------------
-@R2
-D=M
-@R6 // R6 saves L0
-M=D
-@R3 // is equal to 8
-M=0
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
+@skip_if
+0;JMP
 
-//----- division by 2 --
-(div_L0)
-@R4
-M=0
-(div_loop_L0)
-@R4
-M=M+1
-@R6
-M=M-1
-M=M-1
-D=M
-D=D-1
-@div_loop_L0
-D-1;JGE // div again if >=0
-@R4
-D=M
-@R6
-M=D
-//---- end div by 2 ----
+(check_if_neg)
+    @256
+    D=A 
+    @R1    
+    M=M-D
+    M=M+1 //if old num is neg then the 1 on the left was a 
+@continue
+0;JMP
 
-@R3
-M=M-1
-D=M
-@div_L0
-D;JLE // div by 2 until done 8 times
 
-@R6  // get L0 on the left side
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
+(skip_if)
 
+@R1
 D=M
-M=M+D
+M=M+D       //R1 is sum
 D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-//--------------------- end L0 in R6  -------------------------------
+
+@256
+D=D&A
+@check_if_neg
+D;JNE      // if old num is not 0 the left was 1 so we carry it
+(continue)

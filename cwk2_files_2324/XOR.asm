@@ -1,20 +1,26 @@
-@R3
-D=M
-M=!M
-@R5
-M=D //R5 IS R3
 
+@R1 // Ki
+D=M
+
+@R3
+M=!D
 @R4
+M=D
+
+@R7
 D=!M
 
-@R5
-M=D&M//R5 IS NOT R4 AND R3
-
 @R4
+M=D&M //R4 IS NOT R7 AND R1
+
+@R7
 D=M
 @R3
-M=M&D// R4 IS NOT R3 AND R4
+M=M&D // R3 IS NOT R1 AND R7
 D=M
 
-@R5
+@R4
 M=D|M
+D=M
+@R7
+M=D

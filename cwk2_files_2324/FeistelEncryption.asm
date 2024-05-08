@@ -9,128 +9,54 @@ M=M+1 // do the rotation and xor 4 times
 //--------------------- L0 in R6 -----------------------------
 @R2
 D=M
+@255
+A=!A
+D=A&D
 @R6 // R6 saves L0
 M=D
-@R3 // is equal to 8
-M=0
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-@JMP_divL0
-D;JLE
-//----- division by 2 --
-(div_L0)
+@loop
+0;JMP
+@8
+D=A
 @R4
-M=0
-(div_loop_L0)
-@R4
-M=M+1
-@R6
-M=M-1
-M=M-1
-D=M
-D=D-1
-@div_loop_L0
-D-1;JGE // div again if >=0
-@R4
-D=M
-@R6
 M=D
+(check_if_neg_L0)
+    @R3
+    M=M+1 //if old num is neg then the 1 on the left was a 1
+@continueL0
+0;JMP
+
+
+(loopL0)
+    @R3
+    D=M
+    M=M+D       //R3 is sum
+
+    @R4
+    M=M-1       //count that we summed
+
+    @check_if_neg_L0
+    D;JLT       // if old num is neg then on the left was 1 so we carry it
+    (continueL0)
+
+@R4
+D=M
+@loopL0
+D;JGT
 
 @R3
-M=M-1
 D=M
-@div_L0
-D;JLE // div by 2 until done 8 times
-//---- end div by 2 ----
-(JMP_divL0)
-
-@R6  // get L0 on the left side
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
+@R5
+M=D
 //--------------------- end L0 in R6  -------------------------------
 
 //--------------------- r0 in R7 -----------------------------
 @R2
 D=M
-@R7  // trim r0 on the left side
+@255
+D=A&D
+@R7 // R7 saves r0
 M=D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-@R3 // is equal to 8
-M=0
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-
-@JMP_divr0
-D;JLE
-//----- division by 2 --
-(div_r0)
-@R4
-M=0
-(div_loop_r0)
-@R4
-M=M+1
-@R7
-M=M-1
-M=M-1
-D=M
-D=D-1
-@div_loop_r0
-D-1;JGE // div again if >=0
-@R4
-D=M
-@R7
-M=D
-//---- end div by 2 ----
-(JMP_divr0)
-@R3
-M=M-1
-D=M
-@div_r0
-D;JLE // div by 2 until done 8 times
 //-------------------- end r0 in R7 --------------------------
 
 //====================================== cipher loop ===============================
@@ -162,12 +88,12 @@ M=D
 D=!M
 
 @R4
-M=D&M//R4 IS NOT R7 AND R1
+M=D&M //R4 IS NOT R7 AND R1
 
 @R7
 D=M
 @R3
-M=M&D// R3 IS NOT R1 AND R7
+M=M&D // R3 IS NOT R1 AND R7
 D=M
 
 @R4
@@ -213,8 +139,11 @@ M=D
 0;JMP
 
 (check_if_neg)
-    @R1
-    M=M+1 //if old num is neg then the 1 on the left was a 1
+    @256
+    D=A 
+    @R1    
+    M=M-D
+    M=M+1 //if old num is neg then the 1 on the left was a 
 @continue
 0;JMP
 
@@ -224,10 +153,12 @@ M=D
 @R1
 D=M
 M=M+D       //R1 is sum
+D=M
 
-
+@256
+D=D&A
 @check_if_neg
-D;JLT       // if old num is neg then on the left was 1 so we carry it
+D;JNE      // if old num is not 0 the left was 1 so we carry it
 (continue)
 
 //------------------------------ EOF ROTATE  ------------------
@@ -242,124 +173,31 @@ D;JGT // if bigger than 0 redo
 //============================ end cipher loop ================================
 
 //--------------------- L4 in R6 -----------------------------
-@R3 // is equal to 8
-M=0
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-
-//----- division by 2 --
-(div_L5)
+@8
+D=A 
 @R4
-M=0
-(div_loop_L5)
-@R4
-M=M+1
-@R6
-M=M-1
-M=M-1
-D=M
-D=D-1
-@div_loop_L5
-D-1;JGE // div again if >=0
-@R4
-D=M
-@R6
 M=D
-//---- end div by 2 ----
-
-@R3
+(sumloop)
+@R6  
+D=M
+M=M+D 
+@R4
 M=M-1
 D=M
-@div_L5
-D;JLE // div by 2 until done 8 times
-
-@R6  // get L0 on the left side
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
+@sumloop
+D;JLE
 //--------------------- end L4 in R6  -------------------------------
 
 //--------------------- r5 in R7 -----------------------------
 @R7
 D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-D=M
-M=M+D
-
-@R3 // is equal to 8
-M=0
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-//----- division by 2 --
-(div_r5)
-@R4
-M=0
-(div_loop_r5)
-@R4
-M=M+1
-@R7
-M=M-1
-M=M-1
-D=M
-D=D-1
-@div_loop_r5
-D-1;JGE // div again if >=0
-@R4
-D=M
-@R7
+@255
+D=A&D
+@R7 // R7 saves r5
 M=D
-//---- end div by 2 ----
-
-@R3
-M=M-1
-D=M
-@div_r5
-D;JLE // div by 2 until done 8 times
 //-------------------- end r5 in R7 --------------------------
 @R6
+M=M|D
 D=M
 @R0
 M=D
-@R7
-D=M
-@R0
-M=M|D
