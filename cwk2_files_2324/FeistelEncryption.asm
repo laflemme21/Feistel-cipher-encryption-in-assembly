@@ -14,12 +14,14 @@ A=!A
 D=A&D
 @R6 // R6 saves L0
 M=D
-@loop
-0;JMP
+@R3
+M=D
 @8
 D=A
 @R4
 M=D
+@loopL0
+0;JMP
 (check_if_neg_L0)
     @R3
     M=M+1 //if old num is neg then the 1 on the left was a 1
@@ -46,7 +48,7 @@ D;JGT
 
 @R3
 D=M
-@R5
+@R6
 M=D
 //--------------------- end L0 in R6  -------------------------------
 
@@ -60,6 +62,10 @@ M=D
 //-------------------- end r0 in R7 --------------------------
 
 //====================================== cipher loop ===============================
+@4
+D=A 
+@R5 
+M=D
 (loop)
 //-------------------- Li+1 in R6 and Li in R8 ---------------------------
 @R6
@@ -177,6 +183,10 @@ D;JGT // if bigger than 0 redo
 D=A 
 @R4
 M=D
+@sumloop
+0;JMP
+
+
 (sumloop)
 @R6  
 D=M
@@ -185,7 +195,8 @@ M=M+D
 M=M-1
 D=M
 @sumloop
-D;JLE
+D;JGT
+(endL4)
 //--------------------- end L4 in R6  -------------------------------
 
 //--------------------- r5 in R7 -----------------------------
